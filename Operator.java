@@ -1,5 +1,5 @@
 class Operator extends Node {
-  private static final String
+  static final String
   POW      = "^",
   DIVIDE   = "/",
   MULTIPLY = "*",
@@ -22,7 +22,7 @@ class Operator extends Node {
     if (this.left != null) l = this.left.calculate();
 
     if (r != null && l != null) return this.operate(l, r);
-    else if (l != null) return this.operate(l);
+    else if (r != null) return this.operate(r);
     else {
       System.out.printf("Missing operands for operator %s", this.value);
       System.exit(1);
@@ -54,17 +54,6 @@ class Operator extends Node {
     return -1;
   }
 
-  void insert(Node n) {
-    if (this.left == null) {
-      this.left = n;
-    } else if (this.right == null){
-      this.right = n;
-    } else {
-      System.out.println("Failet ganske hardt");
-      System.exit(1);
-    }
-  }
-
   static Node parse(String s) {
     for (int i = 0; i < s.length(); i++) {
       String val = s.substring(0, i + 1);
@@ -84,10 +73,5 @@ class Operator extends Node {
 
   static boolean isOperator(Node n) {
     return n instanceof Operator;
-  }
-
-  @Override
-  public int compareTo(Node other) {
-    return -1;
   }
 }

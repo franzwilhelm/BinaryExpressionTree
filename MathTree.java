@@ -1,37 +1,79 @@
+import java.util.LinkedList;
+
 class MathTree {
   static Node root;
 
   MathTree(String expr) {
-    System.out.println("expr is " + expr);
-    for (int i = 0; i < expr.length(); i++) {
+    root = buildTree(listify(expr.replaceAll(" ", "")));
+  }
+
+  private LinkedList<Node> listify(String expr) {
+    LinkedList<Node> list = new LinkedList<>();
+    Node n = null;
+    for (int i = 0; i < expr.length(); i += n.value.length()) {
       String currExp = expr.substring(i);
-      Node n = Operator.parse(currExp);
+      n = Operator.parse(currExp);
       if (n == null) {
         n = Digit.parse(currExp);
-        this.insert(n);
-      } else {
-        n.insert(root);
-        root = n;
       }
-      i += n.value.length() - 1;
+      list.add(n);
     }
+    return list;
+  }
+
+  private Node getfirstOperator(LinkedList<Node> nodes) {
+    Node first = null;
+    int pri = 0;
+    for (Node n : nodes) {
+      if (Operator.isOperator(n)) {
+        if (n.isOneOf(Operator.SUB, Operator.ADD)) {
+          first = n;
+          break;
+        } else if (pri < 3 && n.isOneOf(Operator.DIVIDE, Operator.MULTIPLY)) {
+          first = n;
+          pri = 3;
+        } else if (pri < 2 && n.isOneOf(Operator.POW)) {
+          first = n;
+          pri = 3;
+        } else if (pri < 1 && n.isOneOf(Operator.COS, Operator.SIN, Operator.TAN)) {
+          first = n;
+          pri = 1;
+        }
+      }
+    }
+    return first;
+  }
+
+  private Node buildTree(LinkedList<Node> nodes) {
+    if (nodes.size() == 1) return nodes.getFirst();
+    if (nodes.isEmpty()) return null;
+
+    Node operator = getfirstOperator(nodes);
+    LinkedList<Node> left = new LinkedList<Node>();
+    LinkedList<Node> right = new LinkedList<Node>();
+
+    boolean found = false;
+    for (Node n : nodes) {
+      if (n == operator) {
+        found = true;
+      } else {
+        if (!found) left.add(n);
+        else right.add(n);
+      }
+    }
+
+    operator.left = buildTree(left);
+    operator.right = buildTree(right);
+    return operator;
   }
 
   @Override
   public String toString() {
-    if (this.root != null){
-      return String.format(" %-8s%s\n\n", this.root, this.root.toString(0));
-    }
-    return "";
+    if (root != null) return root.toString();
+    else return "Empty tree";
   }
 
   static double calculate() {
     return root.calculate();
   }
-
-  private static void insert(Node n) {
-    if (root != null) root.insert(n);
-    else root = n;
-  }
-
 }

@@ -1,4 +1,4 @@
-abstract class Node implements Comparable<Node> {
+abstract class Node {
   protected Node left;
   protected Node right;
   protected String value;
@@ -9,30 +9,24 @@ abstract class Node implements Comparable<Node> {
     this.value = value;
   }
 
-  abstract void insert(Node n);
   abstract double calculate();
 
-  String toString(int ind) {
-    String indent = " ";
-    for (int i = 0; i < ind; i++) {
-      indent += "|     ";
+  boolean isOneOf(String... operators) {
+    for (String operator : operators) {
+      if (this.value.equals(operator)) {
+        return true;
+      }
     }
-    return String.format("%s%s",
-      (this.right != null)
-        ? String.format(horizontal + "%-8s%s", this.right.value, this.right.toString(ind + 1))
-        : "",
-      (this.left != null)
-        ? String.format("\n%s %s\n%s", indent, vertical, indent) +
-        String.format("%-8s%s", this.left.value, this.left.toString(ind))
-        : "");
+    return false;
   }
 
   @Override
   public String toString() {
-    return this.value;
+    String ret = "";
+    if (this.left != null) ret += this.left.toString();
+    ret += this.value;
+    if (this.right != null) ret += this.right.toString();
+    return ret;
   }
-
-  @Override
-  public abstract int compareTo(Node other);
 
 }

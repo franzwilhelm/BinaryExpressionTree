@@ -28,19 +28,4 @@ class Digit extends Node {
     return new Digit(digit);
   }
 
-  void insert(Node n) {
-    if (this.left == null) {
-      this.left = n;
-    } else if (this.right == null){
-      this.right = n;
-    } else {
-      System.out.println("Failet ganske hardt");
-      System.exit(1);
-    }
-  }
-
-  @Override
-  public int compareTo(Node other) {
-    return -1;
-  }
 }
