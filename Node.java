@@ -1,44 +1,38 @@
-abstract class Node<T> {
-  Node left;
-  Node right;
-  T value;
+abstract class Node implements Comparable<Node> {
+  protected Node left;
+  protected Node right;
+  protected String value;
+  private String horizontal = "----" ;
+  private String vertical = "|";
 
-  Node(T value) {
+  protected Node(String value) {
     this.value = value;
   }
 
-  void insert(Node n) throws Exception {
-    if (this.left == null) {
-      this.left = n;
-    } else if (this.right == null){
-      this.right = n;
-    } else {
-      throw new Exception("Failed AF");
+  abstract void insert(Node n);
+  abstract double calculate();
+
+  String toString(int ind) {
+    String indent = " ";
+    for (int i = 0; i < ind; i++) {
+      indent += "|     ";
     }
+    return String.format("%s%s",
+      (this.right != null)
+        ? String.format(horizontal + "%-8s%s", this.right.value, this.right.toString(ind + 1))
+        : "",
+      (this.left != null)
+        ? String.format("\n%s %s\n%s", indent, vertical, indent) +
+        String.format("%-8s%s", this.left.value, this.left.toString(ind))
+        : "");
   }
 
-  abstract int calculate(Digit a, Digit b);
-}
-
-class Operator extends Node {
-  Operator(String value) {
-    super(value);
+  @Override
+  public String toString() {
+    return this.value;
   }
 
-  int calculate(Digit a, Digit b) {
+  @Override
+  public abstract int compareTo(Node other);
 
-
-  }
-
-}
-
-class Digit extends Node {
-  Digit(int value) {
-    super(value);
-  }
-
-  int calculate(Digit a, Digit b) {
-    System.out.println("Cannot calculate with root digit");
-    System.exit(1);
-  }
 }
